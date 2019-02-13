@@ -12,39 +12,37 @@ resources:
     properties:
       eventTrigger:
         eventType: providers/cloud.firestore/eventTypes/document.update
-        resource: projects/${PROJECT_ID}/databases/(default)/documents/${COLLECTION_NAME}/${DOCUMENT_NAME}
+        resource: projects/${PROJECT_ID}/databases/(default)/documents/${REPLICATE_ATTRIBUTES_SOURCE_COLLECTION}/{masterId}
 
 env:
-  - var: REPLICATE_ATTRIBUTES_DATA
-    label: Source -> target mapping for replication
+  - var: REPLICATE_ATTRIBUTES_SOURCE_COLLECTION
+    label: Name of collection to replicate attributes from
+    required: false
+  - var: REPLICATE_ATTRIBUTES_TARGETS
+    label: JSON specifying target collections and attributes to replicate to
     required: false
     description: >-
       JSON specifying mapping from source Firestore collection/field --> target
       collection/field.
-
       For example:
-        {
-          source: {
-              collection: 'master',
-            },
-            targets: [
-              {
-                collection: 'detail1',
-                foreignKey: 'masterId',
-                attributeMapping: {
-                  masterField1: 'detail1Field1',
-                  masterField2: 'detail1Field2',
-                },
-              },
-              {
-                collection: 'detail2',
-                foreignKey: 'masterId',
-                attributeMapping: {
-                  masterField1: 'detail2Field1',
-                  masterField3: 'detail2Field3',
-                },
-              },
-        }
 
-        For more help, see: https://github.com/anishkny/integrify
+        [
+          {
+            "collection": "detail1",
+            "foreignKey": "masterId",
+            "attributeMapping": {
+              "masterField1": "detail1Field1",
+              "masterField2": "detail1Field2"
+            }
+          },
+          {
+            "collection": "detail2",
+            "foreignKey": "masterId",
+            "attributeMapping": {
+              "masterField1": "detail2Field1",
+              "masterField3": "detail2Field3"
+            }
+          }
+        ]
 
+      For more help, see: https://github.com/anishkny/integrify
