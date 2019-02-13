@@ -1,0 +1,50 @@
+specVersion: v1beta1
+name: integrify
+version: 0.0.1
+description: Enforce referential integrity rules for Cloud Firestore
+
+roles:
+  - firebase.developAdmin # gives mod access to Firestore, realtime database, and storage.
+
+resources:
+  - name: replicateAttributes
+    type: firebasemods.v1beta1.function
+    properties:
+      eventTrigger:
+        eventType: providers/cloud.firestore/eventTypes/document.update
+        resource: projects/${PROJECT_ID}/databases/(default)/documents/${COLLECTION_NAME}/${DOCUMENT_NAME}
+
+env:
+  - var: REPLICATE_ATTRIBUTES_DATA
+    label: Source -> target mapping for replication
+    required: false
+    description: >-
+      JSON specifying mapping from source Firestore collection/field --> target
+      collection/field.
+
+      For example:
+        {
+          source: {
+              collection: 'master',
+            },
+            targets: [
+              {
+                collection: 'detail1',
+                foreignKey: 'masterId',
+                attributeMapping: {
+                  masterField1: 'detail1Field1',
+                  masterField2: 'detail1Field2',
+                },
+              },
+              {
+                collection: 'detail2',
+                foreignKey: 'masterId',
+                attributeMapping: {
+                  masterField1: 'detail2Field1',
+                  masterField3: 'detail2Field3',
+                },
+              },
+        }
+
+        For more help, see: https://github.com/anishkny/integrify
+
